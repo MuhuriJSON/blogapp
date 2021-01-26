@@ -1,20 +1,93 @@
 {% extends "blog/base.html" %}
 {% block content %}
-  <article class="media content-section">
-    <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}">
+<style>
+
+
+    .dot {
+        height: 6px;
+        width: 6px;
+        margin-left: 3px;
+        margin-right: 3px;
+        margin-top: 2px;
+        background-color: rgb(91, 92, 91);
+        border-radius: 50%;
+        display: inline-block
+    }
+
+    .name {
+        font-size: 14px
+    }
+
+    .date {
+        font-size: 12px
+    }
+
+    .rating i {
+        color: green;
+        font-size: 13px
+    }
+
+    .comment-text {
+        font-size: 12px
+    }
+</style>
+
+  <article class="media content-section" style="width: 1000px;">
+    <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
     <div class="media-body">
       <div class="article-metadata">
-        <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
-        <small class="text-muted">{{ object.date_posted|date:"F d, Y" }}</small>
-        {% if object.author == user %}
-          <div>
-            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id %}">Update</a>
-            <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.id %}">Delete</a>
-          </div>
-        {% endif %}
+        <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+        <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
       </div>
-      <h2 class="article-title">{{ object.title }}</h2>
-      <p class="article-content">{{ object.content }}</p>
+      <h2 class="article-title">{{ post.title }}</h2>
+        {% if post.author == request.user %}
+          <div>
+            <a class="btn btn-primary btn-sm mt-1 mb-1" href="{% url 'post-update' post.id %}">Update</a>
+            <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' post.id %}">Delete.</a>
+          </div>
+        {% endif %}       
+      <div style="">
+        <img class=" article-img" src="{{ post.photo.url }}" style="width:600px; height:250px; border: solid 1px gray; border-radius: 10px;">
+      </div>
+      <div style="padding-top: 15px;">
+        <p class="article-content">{{ post.content }}</p>
+        <hr>
+        <form method="post" id="comment_form" action="{% url 'post-detail' post.id %}">
+          {% csrf_token %}
+           <textarea name="content" form="comment_form" cols="73" rows="5" placeholder=" Share your thoughts here ...  " style="border-radius: 15px;"></textarea>
+          <input type="submit" name="" value="Add comment" class="btn btn-primary btn-sm mt-1 mb-1">
+        </form>
+        <hr>
+        <div style="margin-top: 20px;">
+          <p>Comments</p>
+        </div>
+        {% if comments %}
+            {% for comment in comments %}
+                <div class="review mt-4" style="padding-top: 30px;">
+                    <div class="d-flex flex-row comment-user"><img class="rounded" src="{{ comment.user.profile.image.url }}" width="90" height="60">
+                        <div class="ml-2">
+                            <div class="d-flex flex-row align-items-center"><span class="name font-weight-bold">{{comment.user}}</span><span class="dot"></span><span class="date">{{ comment.created_at }}</span></div>
+                            <div class="rating"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i></div>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <p class="comment-text">{{ comment.content }}</p>
+                    </div>
+                </div>
+            {% if comment.user == request.user %}
+              <div>
+                <a class="btn btn-primary btn-sm mt-1 mb-1" href="#">Edit</a>
+                <a class="btn btn-danger btn-sm mt-1 mb-1" href="#">Delete.</a>
+              </div>
+            {% endif %} 
+          {% endfor %}
+        {% endif %}
+     </div>
     </div>
+   
   </article>
+
+  <script>
+    
+  </script>
 {% endblock content %}

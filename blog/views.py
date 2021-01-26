@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.views.generic import (
@@ -8,7 +8,8 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
-from .models import Post
+from .models import Post, PostComment
+from . forms import CommentForm
 
 
 def home(request):
@@ -37,13 +38,29 @@ class UserPostListView(ListView):
         return Post.objects.filter(author=user).order_by('-date_posted')
 
 
-class PostDetailView(DetailView):
-    model = Post
+# class PostDetailView(DetailView):
+#     model = Post
+
+
+def PostDetailView(request, post_id, *args, **kwargs):
+    post = Post.objects.get(pk=post_id)
+    if request.method == 'POST':
+        comment = PostComment(post=post, user=request.user, content=request.POST.get('content'))
+        comment.save()
+        return redirect(reverse('post-detail', kwargs={'post_id': post_id}))
+    else:
+        comments = PostComment.objects.filter(post=post).order_by('-created_at')
+        context = {
+            'post': post,
+            'comments': comments,
+        }
+        return render(request, 'blog/post_detail.html', context=context)    
+    
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
-    fields = ['title', 'content']
+    fields = ['title', 'photo', 'content']
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -74,6 +91,14 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user == post.author:
             return True
         return False
+
+
+def CommentDeleteView(request, comment_id, *args, **kwargs):
+    if request.user.is_authenticated():
+        PostComment.objects.delete(pk=comment_id)
+        return redirect('/')
+
+
 
 
 def about(request):
