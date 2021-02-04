@@ -3,10 +3,10 @@ from django.contrib.auth.models import User
 from PIL import Image
 from django.conf import settings
 
-default_photo_url = setting.MEDIA_URL + '/default2.jpg'
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    image = models.ImageField(default=default_photo_url, upload_to='profile_pics', blank=True, null=True)
+    image = models.ImageField(default='default2.jpg', upload_to='profile_pics', blank=True, null=True)
 
     def __str__(self):
         return f'{self.user.username} Profile'
