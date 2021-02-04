@@ -157,7 +157,7 @@ DATABASES['default'].update(prod_db)
 from google.oauth2 import service_account
 
 GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
-    os.path.join(BASE_DIR, "credentials.json")
+    "/credentials.json"
 )
 UPLOAD_ROOT = 'media/uploads/'
 MEDIA_ROOT = 'media/'
