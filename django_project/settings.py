@@ -171,3 +171,4 @@ GS_BUCKET_NAME = 'my-django-blog-bucket'
 
 import django_heroku
 django_heroku.settings(locals())
+django_heroku()
