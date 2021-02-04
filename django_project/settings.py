@@ -166,3 +166,8 @@ MEDIA_URL = 'https://storage.googleapis.com/{}/'.format(GS_BUCKET_NAME)
 DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
 GS_PROJECT_ID = 'blog-303014'
 GS_BUCKET_NAME = 'my-django-blog-bucket'
+
+
+
+import django_heroku
+django_heroku.settings(locals())
