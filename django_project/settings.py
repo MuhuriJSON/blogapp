@@ -166,7 +166,7 @@ MEDIA_URL = '/media/'
 DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
 GS_PROJECT_ID = 'blog-303014'
 GS_BUCKET_NAME = 'my-django-blog-bucket'
-
+SENDFILE_BACKEND = 'sendfile.backends.simple'
 
 
 import django_heroku
